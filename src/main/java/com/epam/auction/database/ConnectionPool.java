@@ -1,0 +1,118 @@
+package com.epam.auction.database;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.util.ArrayDeque;
+import java.util.Deque;
+import java.util.Properties;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantLock;
+
+public class ConnectionPool {
+    private static final ReentrantLock lock = new ReentrantLock();
+
+    private static ConnectionPool instance;
+    private static AtomicBoolean instanceCreated = new AtomicBoolean(false);
+    private Deque<Connection> connections;
+    private Semaphore semaphore;
+
+    private String url;
+    private String user;
+    private String password;
+    private String driver;
+    private int poolSize;
+
+    public static ConnectionPool getInstance() {
+        if (!instanceCreated.get()) {
+            lock.lock();
+            try {
+                if (instance == null) {
+                    instance = new ConnectionPool();
+                    instanceCreated.set(true);
+                }
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        return instance;
+    }
+
+    private ConnectionPool() {
+        initializeData();
+        createConnections();
+    }
+
+    private void initializeData() {
+        connections = new ArrayDeque<>();
+
+        try {
+            Class<? extends ConnectionPool> aClass = this.getClass();
+            ClassLoader classLoader = aClass.getClassLoader();
+            InputStream inputStream = classLoader.getResourceAsStream("database.properties");
+
+            Properties property = new Properties();
+            property.load(inputStream);
+
+            url = property.getProperty("db.url");
+            user = property.getProperty("db.user");
+            password = property.getProperty("db.password");
+            driver = property.getProperty("db.driver");
+
+            String poolSizeString = property.getProperty("db.poolSize");
+            poolSize = Integer.parseInt(poolSizeString);
+
+            Class.forName(driver);
+
+        } catch (IOException e) {
+            throw new IllegalArgumentException("File with properties not found! " + e.getMessage(), e);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Driver is not found! " + e.getMessage(), e);
+        }
+
+        semaphore = new Semaphore(poolSize);
+    }
+
+    public Connection getConnection() {
+
+        try {
+            lock.lock();
+            semaphore.acquire();
+            return connections.pop();
+        } catch (InterruptedException e) {
+            throw new IllegalArgumentException();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void createConnections() {
+        for (int i = 0; i < poolSize; i++) {
+            try {
+                Connection connection = DriverManager.getConnection(url, user, password);
+                connections.push(connection);
+            } catch (SQLException e) {
+                //logging
+            }
+
+        }
+        if (connections.isEmpty()) {
+            throw new IllegalArgumentException("Connections are not created!");
+        }
+    }
+
+    public void returnConnection(Connection connection) {
+        try {
+            lock.lock();
+            connections.push(connection);
+            semaphore.release();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+}
