@@ -2,10 +2,7 @@ package com.epam.auction.command.admin;
 
 import com.epam.auction.command.Command;
 import com.epam.auction.exception.ServiceException;
-import com.epam.auction.model.Lot;
-import com.epam.auction.model.LotStatusEnum;
 import com.epam.auction.model.User;
-import com.epam.auction.service.LotService;
 import com.epam.auction.service.UserService;
 
 import javax.servlet.ServletException;
@@ -18,11 +15,12 @@ public class BanUserCommand implements Command {
 
     private static final String USER_LIST = "userList";
     private static final String USER_MANAGEMENT_PAGE = "/WEB-INF/userManagement.jsp";
+    private static final String USER_ID = "userId";
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException {
 
-        String userIdString = request.getParameter("userId");
+        String userIdString = request.getParameter(USER_ID);
         long userId = Long.valueOf(userIdString);
 
         UserService userService = new UserService();

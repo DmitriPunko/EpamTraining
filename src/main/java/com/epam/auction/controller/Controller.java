@@ -3,6 +3,8 @@ package com.epam.auction.controller;
 import com.epam.auction.command.Command;
 import com.epam.auction.exception.ServiceException;
 import com.epam.auction.factory.CommandFactory;
+import com.epam.auction.model.BiddingCloser;
+import org.apache.log4j.Logger;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -14,7 +16,15 @@ import java.io.IOException;
 
 public class Controller extends HttpServlet {
 
+    private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
     private static final String COMMAND = "command";
+    private static final String ERROR_PAGE = "/WEB-INF/error.jsp";
+
+    @Override
+    public void init() throws ServletException {
+        BiddingCloser biddingCloser = new BiddingCloser();
+        biddingCloser.start();
+    }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -35,7 +45,8 @@ public class Controller extends HttpServlet {
         try {
             page = action.execute(request, response);
         } catch (ServiceException e) {
-            throw new ServletException(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
+            page = ERROR_PAGE;
         }
 
         dispatch(request, response, page);

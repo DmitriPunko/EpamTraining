@@ -6,15 +6,15 @@ import com.epam.auction.model.LotPhoto;
 import java.util.List;
 import java.util.Objects;
 
-public class LotDTO {
+public class LotDto {
 
     private Lot lot;
     private List<LotPhoto> photos;
 
-    public LotDTO() {
+    public LotDto() {
     }
 
-    public LotDTO(Lot lot, List<LotPhoto> photos) {
+    public LotDto(Lot lot, List<LotPhoto> photos) {
         this.lot = lot;
         this.photos = photos;
     }
@@ -43,7 +43,7 @@ public class LotDTO {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        LotDTO lotDTO = (LotDTO) o;
+        LotDto lotDTO = (LotDto) o;
         return Objects.equals(getLot(), lotDTO.getLot()) &&
                 Objects.equals(getPhotos(), lotDTO.getPhotos());
     }

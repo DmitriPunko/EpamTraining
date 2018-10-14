@@ -20,7 +20,7 @@ public class LotPhotoService {
         }
     }
 
-    public long saveLotPhotos(LotPhoto lotPhoto) throws ServiceException {
+    public long saveLotPhoto(LotPhoto lotPhoto) throws ServiceException {
         try (DaoCreator daoCreator = new DaoCreator()) {
             LotPhotoDaoImpl lotPhotoDao = daoCreator.getLotPhotoDaoImpl();
 

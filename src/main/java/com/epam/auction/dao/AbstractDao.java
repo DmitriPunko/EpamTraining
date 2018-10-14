@@ -62,9 +62,13 @@ public abstract class AbstractDao<T extends Identifiable> implements Dao {
 
             preparedStatement.executeUpdate();
 
-            ResultSet key = preparedStatement.getGeneratedKeys();
-            key.next();
-            return key.getLong(1);
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+
+            long generatedKey = 0;
+            if (generatedKeys.next()) {
+                generatedKey = generatedKeys.getLong(1);
+            }
+            return generatedKey;
         } catch (SQLException e) {
             throw new DaoException(e.getMessage(), e);
         }
@@ -88,6 +92,6 @@ public abstract class AbstractDao<T extends Identifiable> implements Dao {
 
     @Override
     public void removeById(Long id) throws DaoException {
-
+        throw new UnsupportedOperationException("You can't remove entity from database");
     }
 }

@@ -5,8 +5,8 @@ import com.epam.auction.model.AuctionTypeEnum;
 import com.epam.auction.model.ColorEnum;
 import com.epam.auction.model.Lot;
 import com.epam.auction.model.LotPhoto;
-import com.epam.auction.model.dto.LotDTO;
-import com.epam.auction.service.LotDTOService;
+import com.epam.auction.model.dto.LotDto;
+import com.epam.auction.service.LotDtoService;
 import com.epam.auction.service.LotPhotoService;
 import com.epam.auction.service.LotService;
 import com.epam.auction.util.DateTimeParser;
@@ -14,6 +14,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -28,8 +29,10 @@ import java.util.List;
 
 public class OfferALotCommand implements Command {
 
+    private static final Logger LOGGER = Logger.getLogger(OfferALotCommand.class.getName());
+
     private static final String ID = "id";
-    private static final String LOT_DTO_LIST = "lotDTOList";
+    private static final String LOT_DTO_LIST = "lotDtoList";
 
     private static final String LOT_PHOTO_DIRECTORY = "/img/lot/";
     private static final String SAVE_PATH = "E:\\EPAM\\Training\\Projects\\FinalProject\\auction\\src\\main\\webapp\\img\\lot\\";
@@ -66,7 +69,7 @@ public class OfferALotCommand implements Command {
                 }
             }
         } catch (FileUploadException e) {
-            //logging
+            LOGGER.error(e.getMessage(), e);
         }
 
         LotService lotService = new LotService();
@@ -76,12 +79,12 @@ public class OfferALotCommand implements Command {
 
         LotPhotoService lotPhotoService = new LotPhotoService();
         for (LotPhoto lotPhoto : lotPhotos) {
-            lotPhotoService.saveLotPhotos(lotPhoto);
+            lotPhotoService.saveLotPhoto(lotPhoto);
         }
 
-        LotDTOService lotDTOService = new LotDTOService();
-        List<LotDTO> lotDTOList = lotDTOService.findAllActive();
-        request.setAttribute(LOT_DTO_LIST, lotDTOList);
+        LotDtoService lotDtoService = new LotDtoService();
+        List<LotDto> lotDtoList = lotDtoService.findAllActive();
+        request.setAttribute(LOT_DTO_LIST, lotDtoList);
 
         return MAIN_PAGE;
     }

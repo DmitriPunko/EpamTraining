@@ -1,6 +1,21 @@
+<%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<!DOCTYPE html>
-<html lang="en">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="text" var="text"/>
+
+<fmt:message bundle="${text}" key="header.button.signOut" var="sign_out"/>
+<fmt:message bundle="${text}" key="header.button.profile" var="profile"/>
+<fmt:message bundle="${text}" key="header.button.offerALot" var="offer_a_lot"/>
+
+<fmt:message bundle="${text}" key="footer.helpInfo" var="contact_us"/>
+
+<fmt:message bundle="${text}" key="userLots.button.pay" var="pay"/>
+<fmt:message bundle="${text}" key="userLots.label.paid" var="paid"/>
+<fmt:message bundle="${text}" key="userLots.button.personalData" var="personal_data"/>
+
+<html lang="${sessionScope.language}">
 <head>
     <link rel="stylesheet" type="text/css" href="../style/userLotsStyle.css">
     <meta charset="UTF-8">
@@ -9,32 +24,44 @@
 <body>
 
 <header>
-    <a href="/controller?command=main" style="float:left">ENAUCT</a>
-    <a href="#">RU</a>
-    <a href="/controller?command=signOut">SIGN OUT</a>
-    <a href="/controller?command=profile">PROFILE</a>
-    <a href="/controller?command=offerALotPage">OFFER A LOT</a>
+    <a href="controller?command=main" style="float:left">ENAUCT</a>
+    <a href="controller?command=language&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
+    <a href="controller?command=signOut">${sign_out}</a>
+    <a href="controller?command=profile">${profile}</a>
+    <a href="controller?command=offerALotPage">${offer_a_lot}</a>
 </header>
 
 
-<div class = "container">
+<div class="container">
 
     <div class="leftcolumn">
         <div class="card">
-            <a href="/controller?command=profile" class="userProfileLink">PERSONAL DATA</a>
+            <a href="controller?command=profile" class="userProfileLink">${personal_data}</a>
         </div>
     </div>
 
     <div class="rightcolumn">
         <div class="card">
+            <div>
+                <c:if test="${not empty paymentMessage}">
+                    <div class="paymentMessage">${paymentMessage}</div>
+                </c:if>
+            </div>
             <h4>Lots:</h4>
             <hr>
-            <c:forEach items="${lotDTOList}" var="lotDTO">
+            <c:forEach items="${lotDtoList}" var="lotDto">
                 <div class="col-75">
-                    <a href="/controller?command=lotInfo&lotId=${lotDTO.lot.idLot}">${lotDTO.lot.brand} ${lotDTO.lot.model} ${lotDTO.lot.yearOfIssue} ${lotDTO.lot.price}$</a>
+                    <a href="controller?command=lotInfo&lotId=${lotDto.lot.idLot}">${lotDto.lot.brand} ${lotDto.lot.model} ${lotDto.lot.yearOfIssue} ${lotDto.lot.price}$</a>
                 </div>
                 <div class="col-25">
-                    <a href="#" class="payLink">PAY</a>
+                    <c:choose>
+                        <c:when test="${lotDto.lot.status.getValue() == 'payment-waiting'}">
+                            <a href="controller?command=payLot&lotId=${lotDto.lot.idLot}" class="payLink">${pay}</a>
+                        </c:when>
+                        <c:otherwise>
+                            <div class="paidStatus">${paid}</div>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
                 <hr>
             </c:forEach>
@@ -43,7 +70,7 @@
 </div>
 
 <footer>
-    <h4>CONTACT US: enauct@gmail.com</h4>
+    <h4>${contact_us}: enauct@gmail.com</h4>
 </footer>
 
 </body>

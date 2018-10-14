@@ -25,6 +25,7 @@ public class UserFilter implements Filter {
     private static final String AUTHENTICATION_MESSAGE = "You should login to view this page";
     private static final String ACCESS_USER_MESSAGE = "You should login as admin to view this page";
     private static final String ACCESS_ADMIN_MESSAGE = "You should login as user to view this page";
+    private static final String LANGUAGE = "language";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -55,13 +56,13 @@ public class UserFilter implements Filter {
                     (LOT_MANAGEMENT_COMMAND.equals(command) ||
                             USER_MANAGEMENT_COMMAND.equals(command))) {
 
-                redirectToLoginWithMessage(request, response, ACCESS_USER_MESSAGE);
+                forwardToLoginWithMessage(request, response, ACCESS_USER_MESSAGE);
             }
 
             if (role.equals(RoleEnum.ADMIN) &&
                     USER_LOTS_COMMAND.equals(command)) {
 
-                redirectToLoginWithMessage(request, response, ACCESS_ADMIN_MESSAGE);
+                forwardToLoginWithMessage(request, response, ACCESS_ADMIN_MESSAGE);
             }
         }
     }
@@ -72,18 +73,19 @@ public class UserFilter implements Filter {
 
         if (!servletPath.endsWith(LOGIN_PAGE) &&
                 !servletPath.endsWith(LOGIN_PAGE_STYLE_PATH) &&
-                !LOGIN_COMMAND.equals(command)) {
+                !LOGIN_COMMAND.equals(command) &&
+                !LANGUAGE.equals(command)) {
 
             HttpSession session = request.getSession();
             RoleEnum role = (RoleEnum) session.getAttribute(ROLE);
 
             if (role == null) {
-                redirectToLoginWithMessage(request, response, AUTHENTICATION_MESSAGE);
+                forwardToLoginWithMessage(request, response, AUTHENTICATION_MESSAGE);
             }
         }
     }
 
-    private void redirectToLoginWithMessage(HttpServletRequest request, HttpServletResponse response, String message) throws IOException, ServletException {
+    private void forwardToLoginWithMessage(HttpServletRequest request, HttpServletResponse response, String message) throws IOException, ServletException {
         request.setAttribute(ERROR_ACCESS_MESSAGE, message);
         ServletContext servletContext = request.getServletContext();
         RequestDispatcher dispatcher = servletContext.getRequestDispatcher(LOGIN_PAGE_PATH);

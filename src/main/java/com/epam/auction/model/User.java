@@ -1,5 +1,6 @@
 package com.epam.auction.model;
 
+import java.math.BigDecimal;
 import java.util.Objects;
 
 public class User implements Identifiable {
@@ -12,6 +13,7 @@ public class User implements Identifiable {
     private String password;
     private RoleEnum role;
     private boolean isBanned;
+    private BigDecimal balance;
 
     public static final String FIRST_NAME = "first_name";
     public static final String LAST_NAME = "last_name";
@@ -21,12 +23,13 @@ public class User implements Identifiable {
     public static final String ID = "id_user";
     public static final String ROLE = "role";
     public static final String IS_BANNED = "is_banned";
+    public static final String BALANCE = "balance";
 
     public User() {
     }
 
     public User(long idUser, String firstName, String lastName, String userName, String email, String password,
-                RoleEnum role, boolean isBanned) {
+                RoleEnum role, boolean isBanned, BigDecimal balance) {
         this.idUser = idUser;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -35,6 +38,7 @@ public class User implements Identifiable {
         this.password = password;
         this.role = role;
         this.isBanned = isBanned;
+        this.balance = balance;
     }
 
     public String getFirstName() {
@@ -101,6 +105,14 @@ public class User implements Identifiable {
         isBanned = banned;
     }
 
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -117,12 +129,13 @@ public class User implements Identifiable {
                 Objects.equals(getUserName(), user.getUserName()) &&
                 Objects.equals(getEmail(), user.getEmail()) &&
                 Objects.equals(getPassword(), user.getPassword()) &&
-                getRole() == user.getRole();
+                getRole() == user.getRole() &&
+                Objects.equals(getBalance(), user.getBalance());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdUser(), getFirstName(), getLastName(), getUserName(), getEmail(), getPassword(), getRole(), isBanned());
+        return Objects.hash(getIdUser(), getFirstName(), getLastName(), getUserName(), getEmail(), getPassword(), getRole(), isBanned(), getBalance());
     }
 
     @Override

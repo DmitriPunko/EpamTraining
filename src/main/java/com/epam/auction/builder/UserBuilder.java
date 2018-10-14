@@ -4,6 +4,7 @@ import com.epam.auction.exception.DaoException;
 import com.epam.auction.model.RoleEnum;
 import com.epam.auction.model.User;
 
+import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -24,7 +25,9 @@ public class UserBuilder implements Builder<User> {
 
             boolean isBanned = resultSet.getBoolean(User.IS_BANNED);
 
-             return new User(id, firstName, lastName, userName, email, password, role, isBanned);
+            BigDecimal balance = resultSet.getBigDecimal(User.BALANCE);
+
+             return new User(id, firstName, lastName, userName, email, password, role, isBanned, balance);
         } catch (SQLException e) {
             throw new DaoException(e.getMessage(), e);
         }

@@ -139,7 +139,7 @@ label {
 
 .col-25 {
     float: left;
-    width: 25%;
+    width: 35%;
     /*margin-bottom: 5px;*/
     /*background-color: green;*/
 }
@@ -155,7 +155,7 @@ label {
 .col-75 {
     /*background-color: green;*/
     float: left;
-    width: 75%;
+    width: 65%;
     margin-top: 6px;
 }
 

@@ -71,11 +71,22 @@ header a:hover {
     color: white;
     text-align: center;
     padding: 10px 12px;
+    margin-bottom: 5px;
     text-decoration: none;
 }
 
 .payLink:hover {
     opacity: 1;
+}
+
+.paidStatus {
+    width: 100%;
+    float: left;
+    display: block;
+    text-align: center;
+    padding: 10px 12px;
+    margin-bottom: 5px;
+    text-decoration: none;
 }
 
 .userProfileLink {
@@ -87,6 +98,13 @@ header a:hover {
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
+}
+
+.paymentMessage {
+    text-align: center;
+    padding: 10px 15px;
+    color: red;
+    opacity: 0.8;
 }
 
 div a {
@@ -124,13 +142,13 @@ label {
 .col-25 {
     float: left;
     width: 25%;
-    margin-top: 6px;
+    margin-bottom: 8px;
 }
 
 .col-75 {
     float: left;
     width: 75%;
-    margin-top: 6px;
+    margin-top: 8px;
 }
 
 /* Clear floats after the columns */

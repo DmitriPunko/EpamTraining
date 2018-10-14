@@ -4,6 +4,7 @@ public enum LotStatusEnum {
     PROCESSING("processing"),
     CONFIRMED("confirmed"),
     REFUSED("refused"),
+    NOTPURCHASED("not-purchased"),
     PAYMENTWAITING("payment-waiting"),
     PAID("paid");
 
@@ -13,5 +14,17 @@ public enum LotStatusEnum {
     }
     public String getValue() {
         return value;
+
+    }
+    public static LotStatusEnum findByValue(String value) {
+        LotStatusEnum[] values = LotStatusEnum.values();
+        LotStatusEnum result = null;
+        for (LotStatusEnum lotStatusEnum : values) {
+            String enumValue = lotStatusEnum.getValue();
+            if (enumValue.equals(value)) {
+                result = lotStatusEnum;
+            }
+        }
+        return result;
     }
 }

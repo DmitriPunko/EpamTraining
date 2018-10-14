@@ -18,11 +18,17 @@ public class DynamicQueryBuilder {
     private static final String YEAR_OF_ISSUE_TO_PARAMETER = "year_of_issue < ?";
     private static final String IS_DAMAGED_PARAMETER = "is_damaged = ?";
     private static final String STATUS_PARAMETER = "status = ?";
-    private static final String DATE_OF_START_PARAMETER = "date_of_start < ?";
-    private static final String DATE_OF_END_PARAMETER = "date_of_end > ?";
+    private static final String DATE_OF_START_FROM_PARAMETER = "date_of_start < ?";
+    private static final String DATE_OF_START_TO_PARAMETER = "date_of_start > ?";
+    private static final String DATE_OF_END_TO_PARAMETER = "date_of_end > ?";
+    private static final String DATE_OF_END_FROM_PARAMETER = "date_of_end < ?";
 
     private static final String YEAR_FROM = "year_of_issue_from";
     private static final String YEAR_TO = "year_of_issue_to";
+    private static final String DATE_OF_START_FROM = "date_of_start_from";
+    private static final String DATE_OF_START_TO = "date_of_start_to";
+    private static final String DATE_OF_END_FROM = "date_of_end_from";
+    private static final String DATE_OF_END_TO = "date_of_end_to";
 
     public static String build(Map<String, String> parameters) {
         if (parameters.size() == 0) {
@@ -71,11 +77,17 @@ public class DynamicQueryBuilder {
             case Lot.STATUS:
                 whereParameter = STATUS_PARAMETER;
                 break;
-            case Lot.DATE_OF_START:
-                whereParameter = DATE_OF_START_PARAMETER;
+            case DATE_OF_START_FROM:
+                whereParameter = DATE_OF_START_FROM_PARAMETER;
                 break;
-            case Lot.DATE_OF_END:
-                whereParameter = DATE_OF_END_PARAMETER;
+            case DATE_OF_START_TO:
+                whereParameter = DATE_OF_START_TO_PARAMETER;
+                break;
+            case DATE_OF_END_FROM:
+                whereParameter = DATE_OF_END_FROM_PARAMETER;
+                break;
+            case DATE_OF_END_TO:
+                whereParameter = DATE_OF_END_TO_PARAMETER;
                 break;
             default:
                 throw new IllegalArgumentException("Unknown name of parameter!");

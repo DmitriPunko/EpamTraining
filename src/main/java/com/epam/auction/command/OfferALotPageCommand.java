@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public class OfferALotPageCommand implements Command {
 
-    public static final String OFFER_A_LOT_PAGE = "/WEB-INF/offerALot.jsp";
+    private static final String OFFER_A_LOT_PAGE = "/WEB-INF/offerALot.jsp";
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {

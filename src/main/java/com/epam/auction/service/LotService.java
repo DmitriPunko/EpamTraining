@@ -1,12 +1,10 @@
 package com.epam.auction.service;
 
-import com.epam.auction.dao.impl.LotDaoImpl;
 import com.epam.auction.dao.creator.DaoCreator;
+import com.epam.auction.dao.impl.LotDaoImpl;
 import com.epam.auction.exception.DaoException;
 import com.epam.auction.exception.ServiceException;
-import com.epam.auction.model.Identifiable;
 import com.epam.auction.model.Lot;
-import com.epam.auction.model.User;
 
 import java.util.List;
 import java.util.Map;
@@ -61,6 +59,15 @@ public class LotService {
             LotDaoImpl lotDao = daoCreator.getLotDaoImpl();
 
             return lotDao.save(item);
+        } catch (DaoException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    public void bid(Lot lot) throws ServiceException {
+        try (DaoCreator daoCreator = new DaoCreator()) {
+            LotDaoImpl lotDao = daoCreator.getLotDaoImpl();
+            lotDao.bid(lot);
         } catch (DaoException e) {
             throw new ServiceException(e.getMessage(), e);
         }

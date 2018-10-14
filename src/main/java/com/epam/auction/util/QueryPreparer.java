@@ -7,7 +7,8 @@ public class QueryPreparer {
 
     public static PreparedStatement prepare(PreparedStatement preparedStatement, String... params) throws SQLException {
 
-        for (int i = 0; i < params.length; i++) {
+        int length = params.length;
+        for (int i = 0; i < length; i++) {
             preparedStatement.setString(i + 1, params[i]);
         }
 

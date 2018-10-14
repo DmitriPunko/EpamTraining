@@ -10,39 +10,68 @@ public class CommandFactory {
         command = command.toUpperCase();
         CommandEnum commandEnum = CommandEnum.valueOf(command);
 
+        Command resultCommand;
         switch (commandEnum) {
             case LOGIN:
-                return new LoginCommand();
+                resultCommand = new LoginCommand();
+                break;
             case OFFERALOTPAGE:
-                return new OfferALotPageCommand();
+                resultCommand = new OfferALotPageCommand();
+                break;
             case MAIN:
-                return new MainCommand();
+                resultCommand = new MainCommand();
+                break;
             case PROFILE:
-                return new ProfileCommand();
+                resultCommand = new ProfileCommand();
+                break;
             case LOTINFO:
-                return new LotInfoCommand();
+                resultCommand = new LotInfoCommand();
+                break;
             case USERLOTS:
-                return new LotsCommand();
+                resultCommand = new LotsCommand();
+                break;
             case SIGNOUT:
-                return new SingOutCommand();
+                resultCommand = new SingOutCommand();
+                break;
             case LOTMANAGEMENT:
-                return new LotManagementCommand();
+                resultCommand = new LotManagementCommand();
+                break;
             case USERMANAGEMENT:
-                return new UserManagementCommand();
+                resultCommand = new UserManagementCommand();
+                break;
             case FINDLOTS:
-                return new FindLotsCommand();
+                resultCommand = new FindLotsCommand();
+                break;
             case OFFERALOT:
-                return new OfferALotCommand();
+                resultCommand = new OfferALotCommand();
+                break;
             case REFUSELOT:
-                return new RefuseLotCommand();
+                resultCommand = new RefuseLotCommand();
+                break;
             case CONFIRMLOT:
-                return new ConfirmLotCommand();
+                resultCommand = new ConfirmLotCommand();
+                break;
             case BANUSER:
-                return new BanUserCommand();
+                resultCommand = new BanUserCommand();
+                break;
             case UNBANUSER:
-                return new UnbanUserCommand();
+                resultCommand = new UnbanUserCommand();
+                break;
+            case TOPUPBALANCE:
+                resultCommand = new TopUpBalanceCommand();
+                break;
+            case PAYLOT:
+                resultCommand = new PayLotCommand();
+                break;
+            case BID:
+                resultCommand = new BidCommand();
+                break;
+            case LANGUAGE:
+                resultCommand = new LanguageCommand();
+                break;
             default:
                 throw new IllegalArgumentException("Invalid command" + commandEnum);
         }
+        return resultCommand;
     }
 }

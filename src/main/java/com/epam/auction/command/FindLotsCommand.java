@@ -3,9 +3,8 @@ package com.epam.auction.command;
 import com.epam.auction.exception.ServiceException;
 import com.epam.auction.model.Lot;
 import com.epam.auction.model.LotStatusEnum;
-import com.epam.auction.model.dto.LotDTO;
-import com.epam.auction.service.LotDTOService;
-import com.epam.auction.service.LotService;
+import com.epam.auction.model.dto.LotDto;
+import com.epam.auction.service.LotDtoService;
 import com.epam.auction.util.DateTimeParser;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,24 +17,28 @@ import java.util.Map;
 public class FindLotsCommand implements Command {
 
     private static final String MAIN_PAGE = "/WEB-INF/main.jsp";
+    private static final String LOT_DTO_LIST = "lotDtoList";
+
     private static final String YEAR_FROM = "year_of_issue_from";
     private static final String YEAR_TO = "year_of_issue_to";
-    private static final String LOT_DTO_LIST = "lotDTOList";
+    private static final String DATE_OF_START_FROM = "date_of_start_from";
+    private static final String DATE_OF_END_TO = "date_of_end_to";
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
 
         Map<String, String> parameters = findLotsParameters(request);
 
-        LotDTOService lotDTOService = new LotDTOService();
-        List<LotDTO> lotDTOList = lotDTOService.findByParameters(parameters);
+        LotDtoService lotDtoService = new LotDtoService();
+        List<LotDto> lotDtoList = lotDtoService.findByParameters(parameters);
 
-        request.setAttribute(LOT_DTO_LIST, lotDTOList);
+        request.setAttribute(LOT_DTO_LIST, lotDtoList);
 
         return MAIN_PAGE;
     }
 
     private Map<String, String> findLotsParameters(HttpServletRequest request) {
+
         String auctionType = request.getParameter(Lot.AUCTION_TYPE);
         String brand = request.getParameter(Lot.BRAND);
         String yearFrom = request.getParameter(YEAR_FROM);
@@ -52,8 +55,8 @@ public class FindLotsCommand implements Command {
 
         Date currentDate = new Date();
         String currentDateString = DateTimeParser.parse(currentDate);
-        parameters.put(Lot.DATE_OF_START, currentDateString);
-        parameters.put(Lot.DATE_OF_END, currentDateString);
+        parameters.put(DATE_OF_START_FROM, currentDateString);
+        parameters.put(DATE_OF_END_TO, currentDateString);
 
 
         return parameters;

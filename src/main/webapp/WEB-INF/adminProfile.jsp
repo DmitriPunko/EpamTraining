@@ -1,5 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
+<%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+
+<fmt:setLocale value="${sessionScope.language}"/>
+<fmt:setBundle basename="text" var="text"/>
+
+<fmt:message bundle="${text}" key="header.button.signOut" var="sign_out"/>
+<fmt:message bundle="${text}" key="header.button.profile" var="profile"/>
+<fmt:message bundle="${text}" key="header.button.offerALot" var="offer_a_lot"/>
+<fmt:message bundle="${text}" key="adminProfile.button.lotManagement" var="lot_management"/>
+<fmt:message bundle="${text}" key="adminProfile.button.userManagement" var="user_management"/>
+<fmt:message bundle="${text}" key="adminProfile.label.personalData" var="personal_data"/>
+<fmt:message bundle="${text}" key="adminProfile.label.firstName" var="first_name"/>
+<fmt:message bundle="${text}" key="adminProfile.label.lastName" var="last_name"/>
+<fmt:message bundle="${text}" key="adminProfile.label.email" var="email"/>
+<fmt:message bundle="${text}" key="adminProfile.label.username" var="username"/>
+
+<fmt:message bundle="${text}" key="footer.helpInfo" var="contact_us"/>
+
+<html lang="${sessionScope.language}">
 <head>
     <link rel="stylesheet" type="text/css" href="../style/adminProfileStyle.css">
     <meta charset="UTF-8">
@@ -8,11 +27,11 @@
 <body>
 
 <header>
-    <a href="/controller?command=main" style="float:left">ENAUCT</a>
-    <a href="#">RU</a>
-    <a href="/controller?command=signOut">SIGN OUT</a>
-    <a href="/controller?command=profile">PROFILE</a>
-    <a href="/controller?command=offerALotPage">OFFER A LOT</a>
+    <a href="controller?command=main" style="float:left">ENAUCT</a>
+    <a href="controller?command=language&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
+    <a href="controller?command=signOut">${sign_out}</a>
+    <a href="controller?command=profile">${profile}</a>
+    <a href="controller?command=offerALotPage">${offer_a_lot}</a>
 </header>
 
 
@@ -20,17 +39,17 @@
 
     <div class="leftcolumn">
         <div class="card">
-            <a href="/controller?command=lotManagement" class="lotManagement link">LOT MANAGEMENT</a>
-            <a href="/controller?command=userManagement" class="userManagement link">USER MANAGEMENT</a>
+            <a href="controller?command=lotManagement" class="lotManagement link">${lot_management}</a>
+            <a href="controller?command=userManagement" class="userManagement link">${user_management}</a>
         </div>
     </div>
 
     <div class="rightcolumn">
         <div class="card">
-            <h4>Personal data:</h4>
+            <h4>${personal_data}:</h4>
             <jsp:useBean id="user" type="com.epam.auction.model.User" scope="request"/>
             <div class="col-25">
-                <label for="firstName">First name</label>
+                <label for="firstName">${first_name}</label>
             </div>
             <div class="col-75">
                 <input type="text" id="firstName" name="firstName" value="${user.firstName}" readonly>
@@ -38,21 +57,21 @@
 
 
             <div class="col-25">
-                <label for="lastName">Last name</label>
+                <label for="lastName">${last_name}</label>
             </div>
             <div class="col-75">
                 <input type="text" id="lastName" name="lastName" value="${user.lastName}" readonly>
             </div>
 
             <div class="col-25">
-                <label for="username">Username</label>
+                <label for="username">${username}</label>
             </div>
             <div class="col-75">
                 <input type="text" id="username" name="username" value="${user.userName}" readonly>
             </div>
 
             <div class="col-25">
-                <label for="email">Email</label>
+                <label for="email">${email}</label>
             </div>
             <div class="col-75">
                 <input type="text" id="email" name="email" value="${user.email}" readonly>
@@ -63,7 +82,7 @@
 </div>
 
 <footer>
-    <h4>CONTACT US: enauct@gmail.com</h4>
+    <h4>${contact_us}: enauct@gmail.com</h4>
 </footer>
 
 </body>

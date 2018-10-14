@@ -4,8 +4,8 @@ import com.epam.auction.command.Command;
 import com.epam.auction.exception.ServiceException;
 import com.epam.auction.model.Lot;
 import com.epam.auction.model.LotStatusEnum;
-import com.epam.auction.model.dto.LotDTO;
-import com.epam.auction.service.LotDTOService;
+import com.epam.auction.model.dto.LotDto;
+import com.epam.auction.service.LotDtoService;
 import com.epam.auction.service.LotService;
 
 import javax.servlet.ServletException;
@@ -19,12 +19,13 @@ import java.util.Optional;
 public class ConfirmLotCommand implements Command {
 
     private static final String LOT_MANAGEMENT_PAGE = "/WEB-INF/lotManagement.jsp";
-    private static final String LOT_DTO_LIST = "lotDTOList";
+    private static final String LOT_DTO_LIST = "lotDtoList";
+    private static final String LOT_ID = "lotId";
 
     @Override
     public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException {
 
-        String idLotString = request.getParameter("lotId");
+        String idLotString = request.getParameter(LOT_ID);
         long idLot = Long.valueOf(idLotString);
 
         LotService lotService = new LotService();
@@ -40,9 +41,9 @@ public class ConfirmLotCommand implements Command {
         Map<String, String> parameters = new HashMap<>();
         parameters.put(Lot.STATUS, LotStatusEnum.PROCESSING.getValue());
 
-        LotDTOService lotDTOService = new LotDTOService();
-        List<LotDTO> lotDTOList = lotDTOService.findByParameters(parameters);
-        request.setAttribute(LOT_DTO_LIST, lotDTOList);
+        LotDtoService lotDtoService = new LotDtoService();
+        List<LotDto> lotDtoList = lotDtoService.findByParameters(parameters);
+        request.setAttribute(LOT_DTO_LIST, lotDtoList);
 
         return LOT_MANAGEMENT_PAGE;
     }

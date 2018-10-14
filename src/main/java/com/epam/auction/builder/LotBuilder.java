@@ -46,8 +46,7 @@ public class LotBuilder implements Builder<Lot> {
             long ownerId = resultSet.getLong(Lot.OWNER_ID);
 
             String statusString = resultSet.getString(Lot.STATUS);
-            statusString = statusString.toUpperCase();
-            LotStatusEnum status = LotStatusEnum.valueOf(statusString);
+            LotStatusEnum status = LotStatusEnum.findByValue(statusString);
 
             return new Lot(id, price, dateOfStart, dateOfEnd, brand, model, classOfCar, yearOfIssue, colorEnum,
                     engineVolume, isDamaged, auctionTypeEnum, ownerId, status);

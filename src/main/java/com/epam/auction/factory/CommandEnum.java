@@ -15,7 +15,11 @@ public enum CommandEnum {
     CONFIRMLOT("confirmLot"),
     REFUSELOT("refuseLot"),
     BANUSER("banUser"),
-    UNBANUSER("unbanUser");
+    UNBANUSER("unbanUser"),
+    TOPUPBALANCE("topUpBalance"),
+    PAYLOT("payLot"),
+    BID("bid"),
+    LANGUAGE("language");
 
 
     private String value;

@@ -1,6 +1,7 @@
 package com.epam.auction.model;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.Objects;
 
@@ -8,6 +9,7 @@ public class Lot implements Identifiable {
 
     private long idLot;
     private BigDecimal price;
+    private BigDecimal currentBid;
     private Date dateOfStart;
     private Date dateOfEnd;
     private String brand;
@@ -36,6 +38,9 @@ public class Lot implements Identifiable {
     public static final String OWNER_ID = "owner_id";
     public static final String STATUS = "status";
 
+    private static final BigDecimal COEFFICIENT_BID_TO_PRICE = new BigDecimal(0.1);
+    private static final int SCALE_TO_ROUND = 0;
+
     public Lot() {
     }
 
@@ -56,6 +61,7 @@ public class Lot implements Identifiable {
         this.auctionType = auctionType;
         this.ownerId = ownerId;
         this.status = status;
+        this.currentBid = calculateBid(price);
     }
 
     public long getIdLot() {
@@ -72,6 +78,7 @@ public class Lot implements Identifiable {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
+        this.currentBid = calculateBid(price);
     }
 
     public Date getDateOfStart() {
@@ -170,6 +177,10 @@ public class Lot implements Identifiable {
         this.status = status;
     }
 
+    public BigDecimal getCurrentBid() {
+        return currentBid;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -184,6 +195,7 @@ public class Lot implements Identifiable {
                 isDamaged() == lot.isDamaged() &&
                 getOwnerId() == lot.getOwnerId() &&
                 Objects.equals(getPrice(), lot.getPrice()) &&
+                Objects.equals(getCurrentBid(), lot.getCurrentBid()) &&
                 Objects.equals(getDateOfStart(), lot.getDateOfStart()) &&
                 Objects.equals(getDateOfEnd(), lot.getDateOfEnd()) &&
                 Objects.equals(getBrand(), lot.getBrand()) &&
@@ -197,11 +209,18 @@ public class Lot implements Identifiable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getIdLot(), getPrice(), getDateOfStart(), getDateOfEnd(), getBrand(), getModel(), getClassOfLot(), getYearOfIssue(), getColorEnum(), getEngineVolume(), isDamaged(), getAuctionType(), getOwnerId(), getStatus());
+        return Objects.hash(getIdLot(), getPrice(), getCurrentBid(), getDateOfStart(), getDateOfEnd(), getBrand(),
+                getModel(), getClassOfLot(), getYearOfIssue(), getColorEnum(), getEngineVolume(), isDamaged(),
+                getAuctionType(), getOwnerId(), getStatus());
     }
 
     @Override
     public long getId() {
         return idLot;
+    }
+
+    private BigDecimal calculateBid(BigDecimal price) {
+        BigDecimal currentBid = price.multiply(COEFFICIENT_BID_TO_PRICE);
+        return currentBid.setScale(SCALE_TO_ROUND, RoundingMode.HALF_UP);
     }
 }

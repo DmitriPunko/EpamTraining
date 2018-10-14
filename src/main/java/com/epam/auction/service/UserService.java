@@ -51,11 +51,21 @@ public class UserService {
         }
     }
 
-    public List<User> findBidders(long lotId) throws ServiceException {
+    public List<User> findLotBidders(long lotId) throws ServiceException {
         try (DaoCreator daoCreator = new DaoCreator()) {
             UserDaoImpl userDao = daoCreator.getUserDaoImpl();
 
-            return userDao.findBidders(lotId);
+            return userDao.findLotBidders(lotId);
+        } catch (DaoException e) {
+            throw new ServiceException(e.getMessage(), e);
+        }
+    }
+
+    public void saveLotBidder(User bidder, long lotId) throws ServiceException{
+        try (DaoCreator daoCreator = new DaoCreator()) {
+            UserDaoImpl userDao = daoCreator.getUserDaoImpl();
+
+            userDao.saveLotBidder(bidder, lotId);
         } catch (DaoException e) {
             throw new ServiceException(e.getMessage(), e);
         }

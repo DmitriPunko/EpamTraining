@@ -1,5 +1,7 @@
 package com.epam.auction.database;
 
+import org.apache.log4j.Logger;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
@@ -14,6 +16,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ConnectionPool {
     private static final ReentrantLock lock = new ReentrantLock();
+    private static final Logger LOGGER = Logger.getLogger(ConnectionPool.class.getName());
 
     private static ConnectionPool instance;
     private static AtomicBoolean instanceCreated = new AtomicBoolean(false);
@@ -96,7 +99,7 @@ public class ConnectionPool {
                 Connection connection = DriverManager.getConnection(url, user, password);
                 connections.push(connection);
             } catch (SQLException e) {
-                //logging
+                LOGGER.error(e.getMessage(), e);
             }
 
         }

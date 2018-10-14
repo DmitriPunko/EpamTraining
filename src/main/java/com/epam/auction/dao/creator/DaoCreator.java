@@ -4,8 +4,6 @@ import com.epam.auction.dao.impl.LotDaoImpl;
 import com.epam.auction.dao.impl.LotPhotoDaoImpl;
 import com.epam.auction.dao.impl.UserDaoImpl;
 import com.epam.auction.database.ConnectionPool;
-import com.epam.auction.exception.ResourceException;
-import com.sun.media.sound.InvalidDataException;
 
 import java.sql.Connection;
 
@@ -29,7 +27,6 @@ public class DaoCreator implements AutoCloseable {
     public LotPhotoDaoImpl getLotPhotoDaoImpl() {
         return new LotPhotoDaoImpl(connection);
     }
-
 
     @Override
     public void close() {
