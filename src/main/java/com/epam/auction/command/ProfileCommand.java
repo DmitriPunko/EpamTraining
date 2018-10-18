@@ -10,6 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.Optional;
 
+/**
+ * Designed to display profile page.
+ */
 public class ProfileCommand implements Command {
 
     private static final String ID = "id";
@@ -18,16 +21,27 @@ public class ProfileCommand implements Command {
     private static final String ADMIN_PROFILE_PAGE = "/WEB-INF/adminProfile.jsp";
     private static final String USER_PROFILE_PAGE = "/WEB-INF/userProfile.jsp";
 
+    /**
+     * Generates a result of request processing in the form of {@link com.epam.auction.command.CommandResult} object
+     * with profile  page.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @return A response in the form of {@link com.epam.auction.command.CommandResult} object.
+     * @throws ServiceException when DaoException is caught.
+     */
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
         HttpSession session = request.getSession();
-        long id = (Long) session.getAttribute(ID);
-        RoleEnum role = (RoleEnum) session.getAttribute(ROLE);
+        long id = (long) session.getAttribute(ID);
 
         UserService userService = new UserService();
         Optional<User> user = userService.findById(id);
         user.ifPresent(aUser -> request.setAttribute(USER, aUser));
 
-        return RoleEnum.ADMIN.equals(role) ? ADMIN_PROFILE_PAGE : USER_PROFILE_PAGE;
+        RoleEnum role = (RoleEnum) session.getAttribute(ROLE);
+        return RoleEnum.ADMIN.equals(role) ?
+                new CommandResult(ADMIN_PROFILE_PAGE, false) :
+                new CommandResult(USER_PROFILE_PAGE, false);
     }
 }

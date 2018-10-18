@@ -1,5 +1,8 @@
 package com.epam.auction.factory;
 
+/**
+ *  Storage of commands
+ */
 public enum CommandEnum {
     LOGIN("login"),
     OFFERALOTPAGE("offerALotPage"),

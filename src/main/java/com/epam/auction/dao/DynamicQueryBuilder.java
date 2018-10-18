@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ *  Designed to build query depends on searching parameters.
+ */
 public class DynamicQueryBuilder {
 
     private static final String ALL_LOTS_QUERY = "SELECT * FROM lot";
@@ -30,6 +33,12 @@ public class DynamicQueryBuilder {
     private static final String DATE_OF_END_FROM = "date_of_end_from";
     private static final String DATE_OF_END_TO = "date_of_end_to";
 
+    /**
+     * Designed to build query depends on searching parameters.
+     *
+     * @param parameters a {@link Map} object that maps keys(name of parameter) to values of parameters.
+     * @return a {@link String} object that contains built query to database
+     */
     public static String build(Map<String, String> parameters) {
         if (parameters.size() == 0) {
             return ALL_LOTS_QUERY;
@@ -54,7 +63,13 @@ public class DynamicQueryBuilder {
         return resultQuery.toString();
     }
 
-    public static String findWhereParameterByName(String name) {
+    /**
+     *  Designed to searching "where" parameter to query by parameters of object.
+     *
+     * @param name a {@link String} object that contains name of parameter
+     * @return corresponding {@link String} object with the where parameter.
+     */
+    private static String findWhereParameterByName(String name) {
 
         String whereParameter;
 

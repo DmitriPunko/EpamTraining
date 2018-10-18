@@ -63,14 +63,12 @@ footer h4 {
 }
 
 /* Create three unequal columns that floats next to each other */
-.column {
-    float: left;
-    padding: 10px;
-}
 
 /* Left and right column */
-.column.side {
+.side {
     width: 73%;
+    float: left;
+    padding: 10px;
 }
 
 #lots {
@@ -111,16 +109,24 @@ footer h4 {
 }
 
 .bidButton {
-    margin: 10px;
+    width: 100%;
+    float: left;
+    background-color: #393E46;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    text-decoration: none;
 }
 
 /* Middle column */
-.column.middle {
+.middle {
     width: 27%;
     border-radius: 5px;
     background-color: #f2f2f2;
-    padding: 0;
     margin-top: 10px;
+    float: left;
+    padding: 0;
 }
 
 select, textarea {
@@ -187,15 +193,21 @@ label {
     margin-top: 6px;
 }
 
-.col-15 {
+.col-10 {
     float: left;
-    width: 15%;
+    width: 10%;
     margin-top: 6px;
 }
 
 .col-75 {
     float: left;
     width: 75%;
+    margin-top: 6px;
+}
+
+.col-70 {
+    float: left;
+    width: 70%;
     margin-top: 6px;
 }
 
@@ -207,8 +219,8 @@ label {
 }
 
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 1000px) {
-    .col-25, .col-75, .col-15, .col-30, input[type=submit] {
+@media screen and (max-width: 1200px) {
+     .side, .middle, input[type=submit] {
         width: 100%;
         margin-top: 0;
     }
@@ -219,5 +231,13 @@ label {
     .topnav a {
         float: none;
         width: 100%;
+    }
+}
+
+@media screen and (max-width: 800px) {
+    .lots {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
     }
 }

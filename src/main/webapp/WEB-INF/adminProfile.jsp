@@ -8,6 +8,10 @@
 <fmt:message bundle="${text}" key="header.button.signOut" var="sign_out"/>
 <fmt:message bundle="${text}" key="header.button.profile" var="profile"/>
 <fmt:message bundle="${text}" key="header.button.offerALot" var="offer_a_lot"/>
+<fmt:message bundle="${text}" key="header.button.home" var="home"/>
+
+<fmt:message bundle="${text}" key="footer.helpInfo" var="contact_us"/>
+
 <fmt:message bundle="${text}" key="adminProfile.button.lotManagement" var="lot_management"/>
 <fmt:message bundle="${text}" key="adminProfile.button.userManagement" var="user_management"/>
 <fmt:message bundle="${text}" key="adminProfile.label.personalData" var="personal_data"/>
@@ -16,7 +20,6 @@
 <fmt:message bundle="${text}" key="adminProfile.label.email" var="email"/>
 <fmt:message bundle="${text}" key="adminProfile.label.username" var="username"/>
 
-<fmt:message bundle="${text}" key="footer.helpInfo" var="contact_us"/>
 
 <html lang="${sessionScope.language}">
 <head>
@@ -27,8 +30,8 @@
 <body>
 
 <header>
-    <a href="controller?command=main" style="float:left">ENAUCT</a>
-    <a href="controller?command=language&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
+    <a href="controller?command=main" style="float:left">${home}</a>
+    <a href="controller?command=language&currentPage=profile&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
     <a href="controller?command=signOut">${sign_out}</a>
     <a href="controller?command=profile">${profile}</a>
     <a href="controller?command=offerALotPage">${offer_a_lot}</a>

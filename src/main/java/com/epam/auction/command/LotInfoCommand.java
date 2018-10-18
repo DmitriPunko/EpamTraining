@@ -11,6 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Designed to find of information about the lot.
+ */
 public class LotInfoCommand implements Command {
 
     private static final String LOT_ID = "lotId";
@@ -18,8 +21,18 @@ public class LotInfoCommand implements Command {
     private static final String LOT_INFO_PAGE = "/WEB-INF/lotInfo.jsp";
     private static final String BIDDERS_LIST = "biddersList";
 
+
+    /**
+     * Process the request, finds lot info and generates a result of processing in the form of
+     * {@link com.epam.auction.command.CommandResult} object.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @return A response in the form of {@link com.epam.auction.command.CommandResult} object.
+     * @throws ServiceException when DaoException is caught.
+     */
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
 
         String idString = request.getParameter(LOT_ID);
         long lotId = Long.valueOf(idString);
@@ -31,7 +44,7 @@ public class LotInfoCommand implements Command {
         List<User> bidders = userService.findLotBidders(lotId);
         request.setAttribute(BIDDERS_LIST, bidders);
 
-        return LOT_INFO_PAGE;
+        return new CommandResult(LOT_INFO_PAGE, false);
     }
 
 }

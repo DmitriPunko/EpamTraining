@@ -1,6 +1,7 @@
 package com.epam.auction.controller;
 
 import com.epam.auction.command.Command;
+import com.epam.auction.command.CommandResult;
 import com.epam.auction.exception.ServiceException;
 import com.epam.auction.factory.CommandFactory;
 import com.epam.auction.model.BiddingCloser;
@@ -14,15 +15,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ *  Provides a HTTP servlet class suitable for a Web site.
+ */
 public class Controller extends HttpServlet {
 
     private static final Logger LOGGER = Logger.getLogger(Controller.class.getName());
     private static final String COMMAND = "command";
     private static final String ERROR_PAGE = "/WEB-INF/error.jsp";
+    private BiddingCloser biddingCloser;
 
     @Override
-    public void init() throws ServletException {
-        BiddingCloser biddingCloser = new BiddingCloser();
+    public void init() {
+        biddingCloser = new BiddingCloser();
         biddingCloser.start();
     }
 
@@ -36,25 +41,72 @@ public class Controller extends HttpServlet {
         processRequest(request, response);
     }
 
+
+    @Override
+    public void destroy() {
+        biddingCloser.interrupt();
+    }
+
+    /**
+     * Processes the request by obtaining a command from the {@link HttpServletRequest} object, execute this command and redirects or
+     * forwards on destination page depending on the result of the command.
+     *
+     * @param request
+     *          an {@link HttpServletRequest} object that contains client request
+     * @param response
+     *          an {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @throws ServletException General exception a servlet can throw when it encounters difficulty.
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     */
     private void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String command = request.getParameter(COMMAND);
         Command action = CommandFactory.create(command);
 
-        String page;
+        LOGGER.info("Command = " + command);
+
+        CommandResult commandResult;
         try {
-            page = action.execute(request, response);
+            commandResult  = action.execute(request, response);
         } catch (ServiceException e) {
             LOGGER.error(e.getMessage(), e);
-            page = ERROR_PAGE;
+            commandResult = new CommandResult(ERROR_PAGE, false);
         }
 
-        dispatch(request, response, page);
+        String page = commandResult.getPage();
+        if (commandResult.isRedirect()) {
+            sendRedirect(response, page);
+        } else {
+            dispatch(request, response, page);
+        }
     }
 
+    /**
+     * Forwards to destination page.
+     *
+     * @param request
+     *          an {@link HttpServletRequest} object that contains client request.
+     * @param response
+     *          an {@link HttpServletResponse} object that contains the response the servlet sends to the client.
+     * @param page an {@link String} object that contains forwarding page.
+     * @throws ServletException General exception a servlet can throw when it encounters difficulty.
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     */
     private void dispatch(HttpServletRequest request, HttpServletResponse response, String page) throws ServletException, IOException {
         ServletContext servletContext = getServletContext();
         RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher(page);
         requestDispatcher.forward(request, response);
+    }
+
+    /**
+     * Redirects to destination page.
+     *
+     * @param response
+     *          an {@link HttpServletResponse} object that contains the response the servlet sends to the client.
+     * @param page an {@link String} object that contains redirecting page.
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     */
+    private void sendRedirect(HttpServletResponse response, String page) throws IOException {
+        response.sendRedirect(page);
     }
 }

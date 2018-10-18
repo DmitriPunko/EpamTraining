@@ -1,32 +1,39 @@
 package com.epam.auction.command;
 
 import com.epam.auction.exception.ServiceException;
-import com.epam.auction.model.RoleEnum;
 import com.epam.auction.model.User;
 import com.epam.auction.service.UserService;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+/**
+ * Designed to perform recharge operations.
+ */
 public class TopUpBalanceCommand implements Command {
 
     private static final String ID = "id";
     private static final String USER = "user";
-    private static final String ROLE = "role";
-    private static final String ADMIN_PROFILE_PAGE = "/WEB-INF/adminProfile.jsp";
-    private static final String USER_PROFILE_PAGE = "/WEB-INF/userProfile.jsp";
     private static final String TOP_UP_BALANCE = "topUpBalance";
+    private static final String COMMAND_PROFILE = "controller?command=profile";
 
+    /**
+     * Process the request, top up balance and generates a result of processing in the form of
+     * {@link com.epam.auction.command.CommandResult} object.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @return A response in the form of {@link com.epam.auction.command.CommandResult} object.
+     * @throws ServiceException when DaoException is caught.
+     */
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
 
         HttpSession session = request.getSession();
-        long id = (Long) session.getAttribute(ID);
-        RoleEnum role = (RoleEnum) session.getAttribute(ROLE);
+        long id = (long) session.getAttribute(ID);
 
         UserService userService = new UserService();
         Optional<User> user = userService.findById(id);
@@ -44,6 +51,6 @@ public class TopUpBalanceCommand implements Command {
             request.setAttribute(USER, aUser);
         }
 
-        return RoleEnum.ADMIN.equals(role) ? ADMIN_PROFILE_PAGE : USER_PROFILE_PAGE;
+        return new CommandResult(COMMAND_PROFILE, true);
     }
 }

@@ -3,8 +3,17 @@ package com.epam.auction.factory;
 import com.epam.auction.command.*;
 import com.epam.auction.command.admin.*;
 
+/**
+ * Designed to build an object of type {@link Command}.
+ */
 public class CommandFactory {
 
+    /**
+     * Designed to build an object of type {@link Command} depends on command name.
+     *
+     * @param command a {@link String} object that contains builder name
+     * @return an object of type {@link Command}.
+     */
     public static Command create(String command) {
 
         command = command.toUpperCase();

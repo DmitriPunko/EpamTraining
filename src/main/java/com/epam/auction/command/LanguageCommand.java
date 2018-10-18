@@ -1,30 +1,35 @@
 package com.epam.auction.command;
 
-import com.epam.auction.exception.ServiceException;
-import com.epam.auction.model.RoleEnum;
-import com.epam.auction.model.dto.LotDto;
-import com.epam.auction.service.LotDtoService;
-
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.List;
 
+/**
+ * Designed to change language.
+ */
 public class LanguageCommand implements Command {
 
     private static final String LANGUAGE = "language";
-    private static final String LOGIN_PAGE = "/WEB-INF/login.jsp";
-    private static final String MAIN_PAGE = "/WEB-INF/main.jsp";
-    private static final String LOT_DTO_LIST = "lotDtoList";
-    private static final String ROLE = "role";
     private static final String RU = "RU";
     private static final String EN = "EN";
     private static final String UNKNOWN_LANGUAGE_MESSAGE = "Unknown language!";
     private static final String NEXT_LANGUAGE = "nextLanguage";
 
+    private static final String CURRENT_PAGE = "currentPage";
+    private static final String LOGIN_PAGE = "/WEB-INF/login.jsp";
+    private static final String COMMAND = "controller?command=";
+
+    /**
+     * Process the request, change language and generates a result of processing in the form of
+     * {@link com.epam.auction.command.CommandResult} object.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @return A response in the form of {@link com.epam.auction.command.CommandResult} object.
+     */
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) {
+
         String language = request.getParameter(LANGUAGE);
         HttpSession session = request.getSession();
         session.setAttribute(LANGUAGE, language);
@@ -33,17 +38,10 @@ public class LanguageCommand implements Command {
         request.setAttribute(NEXT_LANGUAGE, nextLanguage);
         session.setAttribute(NEXT_LANGUAGE, nextLanguage);
 
-        RoleEnum userRole = (RoleEnum) session.getAttribute(ROLE);
-        String page;
-        if (userRole != null) {
-            page = MAIN_PAGE;
-            LotDtoService lotDtoService = new LotDtoService();
-            List<LotDto> lotDtoList = lotDtoService.findAllActive();
-            request.setAttribute(LOT_DTO_LIST, lotDtoList);
-        } else {
-            page = LOGIN_PAGE;
-        }
-        return page;
+        String page = request.getParameter(CURRENT_PAGE);
+        return  page == null || page.isEmpty() ?
+                new CommandResult(LOGIN_PAGE, false) :
+                new CommandResult(COMMAND + page, true);
     }
 
     private String findNextLanguage(String language) {
@@ -56,7 +54,7 @@ public class LanguageCommand implements Command {
                 nextLanguage = RU;
                 break;
             default:
-                throw  new IllegalArgumentException(UNKNOWN_LANGUAGE_MESSAGE);
+                throw new IllegalArgumentException(UNKNOWN_LANGUAGE_MESSAGE);
         }
         return nextLanguage;
     }

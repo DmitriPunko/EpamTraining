@@ -5,12 +5,15 @@
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="text" var="text"/>
 
+<fmt:message bundle="${text}" key="header.button.home" var="home"/>
+
+<fmt:message bundle="${text}" key="footer.helpInfo" var="footer_info"/>
+
 <fmt:message bundle="${text}" key="login.label.username" var="username_label"/>
 <fmt:message bundle="${text}" key="login.label.password" var="password_label"/>
 <fmt:message bundle="${text}" key="login.password.placeholder" var="password_placeholder"/>
 <fmt:message bundle="${text}" key="login.username.placeholder" var="username_placeholder"/>
 <fmt:message bundle="${text}" key="login.button.submit" var="submit_button"/>
-<fmt:message bundle="${text}" key="footer.helpInfo" var="footer_info"/>
 <fmt:message bundle="${text}" key="login.username.pattern.error" var="username_pattern_error"/>
 <fmt:message bundle="${text}" key="login.username.pattern.error" var="username_pattern_error"/>
 <fmt:message bundle="${text}" key="login.error.access.message" var="error_access"/>
@@ -28,8 +31,8 @@
 <body>
 
 <header>
-    <a href="controller?command=main">ENAUCT</a>
-    <a href="controller?command=language&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
+    <a href="controller?command=main">${home}</a>
+    <a href="controller?command=language&currentPage=&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
 </header>
 
 

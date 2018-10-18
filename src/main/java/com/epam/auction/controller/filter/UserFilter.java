@@ -8,6 +8,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
+/**
+ * Designed to perform a user filter operation.
+ */
 public class UserFilter implements Filter {
 
     private static final String ROLE = "role";
@@ -31,6 +34,21 @@ public class UserFilter implements Filter {
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
+
+    /**
+     * Method of the Filter is called by the
+     * container each time a request/response pair is passed through the
+     * chain due to a client request for a resource at the end of the chain,
+     * checks user on authorization and access to the requested page.
+     * In the case of non authorization or not access user is forward to login page with appropriate message.
+     *
+     * @param servletRequest  an {@link ServletRequest} object that contains client request
+     * @param servletResponse an {@link ServletResponse} object that contains the response the servlet
+     * @param filterChain an {@link FilterChain} object that allows the Filter to pass
+     *                   on the request and response to the next entity in the chain.
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     * @throws ServletException General exception a servlet can throw when it encounters difficulty.
+     */
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
 
@@ -45,6 +63,14 @@ public class UserFilter implements Filter {
         filterChain.doFilter(request, response);
     }
 
+    /**
+     * The method designed to check user access.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     * @throws ServletException General exception a servlet can throw when it encounters difficulty.
+     */
     private void checkForAccess(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
         RoleEnum role = (RoleEnum) session.getAttribute(ROLE);
@@ -67,6 +93,14 @@ public class UserFilter implements Filter {
         }
     }
 
+    /**
+     * The method designed to check user access.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     * @throws ServletException General exception a servlet can throw when it encounters difficulty.
+     */
     private void checkForAuthorization(String servletPath, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 
         String command = request.getParameter(COMMAND);
@@ -85,6 +119,14 @@ public class UserFilter implements Filter {
         }
     }
 
+    /**
+     * The method designed to forward user on login page with appropriate message.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet
+     * @throws IOException Signals that an I/O exception of some sort has occurred.
+     * @throws ServletException General exception a servlet can throw when it encounters difficulty.
+     */
     private void forwardToLoginWithMessage(HttpServletRequest request, HttpServletResponse response, String message) throws IOException, ServletException {
         request.setAttribute(ERROR_ACCESS_MESSAGE, message);
         ServletContext servletContext = request.getServletContext();

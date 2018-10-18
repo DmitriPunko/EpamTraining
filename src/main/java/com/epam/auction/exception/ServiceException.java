@@ -1,5 +1,8 @@
 package com.epam.auction.exception;
 
+/**
+ * Designed for signal that service exception of some sort has occurred.
+ */
 public class ServiceException extends Exception {
     public ServiceException() {
     }

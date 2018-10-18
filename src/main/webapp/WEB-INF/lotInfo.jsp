@@ -1,6 +1,7 @@
-<%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/tld/fullFilePath.tld" %>,
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="text" var="text"/>
@@ -8,6 +9,7 @@
 <fmt:message bundle="${text}" key="header.button.signOut" var="sign_out"/>
 <fmt:message bundle="${text}" key="header.button.profile" var="profile"/>
 <fmt:message bundle="${text}" key="header.button.offerALot" var="offer_a_lot"/>
+<fmt:message bundle="${text}" key="header.button.home" var="home"/>
 
 <fmt:message bundle="${text}" key="footer.helpInfo" var="contact_us"/>
 
@@ -24,12 +26,11 @@
 <fmt:message bundle="${text}" key="lotInfo.label.year" var="year"/>
 <fmt:message bundle="${text}" key="lotInfo.label.price" var="price"/>
 <fmt:message bundle="${text}" key="lotInfo.lotHeader" var="bargaining"/>
-<fmt:message bundle="${text}" key="lotInfo.label.participants" var="participants"/>
 <fmt:message bundle="${text}" key="lotInfo.label.lotInfo" var="lot_info"/>
 <fmt:message bundle="${text}" key="lotInfo.label.currentBid" var="current_bid"/>
 <fmt:message bundle="${text}" key="lotInfo.button.bid" var="bid"/>
-
-
+<fmt:message bundle="${text}" key="lotInfo.damaged.yes" var="yes"/>
+<fmt:message bundle="${text}" key="lotInfo.damaged.no" var="no"/>
 
 <html lang="${sessionScope.language}">
 <head>
@@ -39,16 +40,18 @@
 </head>
 <body>
 
+<jsp:useBean id="lotDto" scope="request" type="com.epam.auction.model.dto.LotDto"/>
+
 <header>
-    <a href="controller?command=main" style="float:left">ENAUCT</a>
-    <a href="controller?command=language&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
+    <a href="controller?command=main" style="float:left">${home}</a>
+    <a href="controller?command=language&currentPage=lotInfo${lotDto.lot.idLot}&language=${sessionScope.nextLanguage}"
+       style="float:right">${sessionScope.nextLanguage}</a>
     <a href="controller?command=signOut">${sign_out}</a>
     <a href="controller?command=profile">${profile}</a>
     <a href="controller?command=offerALotPage">${offer_a_lot}</a>
 </header>
 
 <div class="card">
-    <jsp:useBean id="lotDto" scope="request" type="com.epam.auction.model.dto.LotDto"/>
 
     <div class="col-25 container">
         <div class="lotHeader">${bargaining}</div>
@@ -57,7 +60,7 @@
             <div>
                 <ol>
                     <c:forEach items="${biddersList}" var="bidder">
-                    <li>${bidder.firstName} ${bidder.lastName}</li>
+                        <li>${bidder.firstName} ${bidder.lastName}</li>
                     </c:forEach>
                 </ol>
             </div>
@@ -143,7 +146,14 @@
                     <label for="isDamaged">${damaged}</label>
                 </div>
                 <div class="col-75">
-                    <input type="text" id="isDamaged" name="isDamaged" value="${lotDto.lot.damaged}" readonly>
+                    <c:choose>
+                        <c:when test="${lotDto.lot.damaged}">
+                            <input type="text" id="isDamaged" name="isDamaged" value="${yes}" readonly>
+                        </c:when>
+                        <c:otherwise>
+                            <input type="text" id="isDamaged" name="isDamaged" value="${no}" readonly>
+                        </c:otherwise>
+                    </c:choose>
                 </div>
             </div>
 
@@ -180,10 +190,16 @@
         <div class="rightcolumn">
             <div class="row">
                 <c:forEach items="${lotDto.photos}" var="photo">
-                    <a rel="nofollow" target="_blank" href="../${photo.url}">
-                        <img src="..${photo.url}" width="210px" alt="photo">
+                    <c:set var="photoName" value="${photo.url}" scope="page"/>
+                    <a rel="nofollow" target="_blank" href="${ctg:filePath(photoName)}">
+                        <img src="${ctg:filePath(photoName)}" width="210px" alt="photo">
                     </a>
                 </c:forEach>
+                <%--<c:forEach items="${lotDto.photos}" var="photo">--%>
+                <%--<a rel="nofollow" target="_blank" href="../${photo.url}">--%>
+                <%--<img src="..${photo.url}" width="210px" alt="photo">--%>
+                <%--</a>--%>
+                <%--</c:forEach>--%>
             </div>
         </div>
 

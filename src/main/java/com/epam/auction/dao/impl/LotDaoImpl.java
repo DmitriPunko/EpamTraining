@@ -12,6 +12,9 @@ import java.math.BigDecimal;
 import java.sql.Connection;
 import java.util.*;
 
+/**
+ *  Class is an implementation of access to lot database and provides methods to work with it.
+ */
 public class LotDaoImpl extends AbstractDao<Lot> implements LotDao {
 
     private static final String DATE_OF_START_FROM = "date_of_start_from";
@@ -37,6 +40,13 @@ public class LotDaoImpl extends AbstractDao<Lot> implements LotDao {
     }
 
 
+    /**
+     * The method designed for the process of saving a {@link Lot} object in database.
+     *
+     * @param item an {@link Identifiable} {@link Lot} object that should be saved to the database.
+     * @return created lot identifier in database.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public long save(Identifiable item) throws DaoException {
         Lot lot = (Lot) item;
@@ -76,18 +86,31 @@ public class LotDaoImpl extends AbstractDao<Lot> implements LotDao {
         String ownerIdString = String.valueOf(ownerId);
 
         LotStatusEnum lotStatusEnum = lot.getStatus();
-        String losStatusString = lotStatusEnum != null ? lotStatusEnum.getValue() : LotStatusEnum.PROCESSING.getValue();
+        String losStatusString = lotStatusEnum != null ?
+                lotStatusEnum.getValue() :
+                LotStatusEnum.PROCESSING.getValue();
 
         return executeUpdate(INSERT_QUERY, idLotString, priceString, dateOfStartString, dateOfEndString, brand, model,
                 classOfLot, yearOfIssueString, colorString, engineVolumeString, isDamagedString, auctionTypeString,
                 ownerIdString, losStatusString);
     }
 
+    /**
+     *
+     * @return Name of the table designed for storage {@link Lot}.
+     */
     @Override
     protected String getTableName() {
         return TABLE_NAME;
     }
 
+    /**
+     *  Method designed for searching user lots depends on user identifier.
+     *
+     * @param id - User identifier in database
+     * @return an {@link List} implementation with an user {@link Lot} objects.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public List<Lot> findAllByUserId(long id) throws DaoException {
         String idParameter = String.valueOf(id);
@@ -95,6 +118,12 @@ public class LotDaoImpl extends AbstractDao<Lot> implements LotDao {
         return executeQuery(ALL_LOTS_BY_USER_ID_QUERY, new LotBuilder(), idParameter);
     }
 
+    /**
+     * The method searches for all active (which are in the auction) lots.
+     *
+     * @return an {@link List} implementation with {@link Lot} objects.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public List<Lot> findAllActive() throws DaoException {
         Date currentDate = new Date();
@@ -108,6 +137,13 @@ public class LotDaoImpl extends AbstractDao<Lot> implements LotDao {
         return findByParameters(parameters);
     }
 
+    /**
+     * The method searches for lots with given parameters.
+     *
+     * @param parameters a {@link Map} object that maps keys(name of parameter) to values of parameters.
+     * @return an {@link List} implementation with {@link Lot} objects.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public List<Lot> findByParameters(Map<String, String> parameters) throws DaoException {
         Map<String, String> processedParameters = new HashMap<>();
@@ -131,17 +167,62 @@ public class LotDaoImpl extends AbstractDao<Lot> implements LotDao {
         return executeQuery(query, new LotBuilder(), parameterValues);
     }
 
+    /**
+     * Makes a bid based on the type of auction.
+     *
+     * @param lot The {@link Lot} object of the lot on which you want to bet.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public void bid(Lot lot) throws DaoException {
+
+        AuctionTypeEnum auctionType = lot.getAuctionType();
+        if (AuctionTypeEnum.DIRECT.equals(auctionType)) {
+           increasePrice(lot);
+        } else {
+            decreasePrice(lot);
+        }
+
+        long idLot = lot.getIdLot();
+        String lotIdString = String.valueOf(idLot);
+
+        BigDecimal oldPrice = lot.getPrice();
+        String oldPriceString = oldPrice.toString();
+
+        BigDecimal newPrice = lot.getPrice();
+        String newPriceString = newPrice.toString();
+
+        executeUpdate(BID_LOT_QUERY, newPriceString, lotIdString, oldPriceString);
+    }
+
+    /**
+     * Increases the price of the lot depending on its current bid.
+     *
+     * @param lot an {@link Lot}object to be subject to price increase.
+     */
+    private void increasePrice(Lot lot) {
+        BigDecimal currentBid = lot.getCurrentBid();
+        BigDecimal oldPrice = lot.getPrice();
+        BigDecimal newPrice = oldPrice.add(currentBid);
+        lot.setPrice(newPrice);
+    }
+
+    /**
+     * Decreases the price of the lot depending on its current bid and set {@link LotStatusEnum} of lot in
+     * payment-waiting in the case of negative or zero price after bidding.
+     *
+     * @param lot an {@link Lot}object to be subject to price decrease.
+     */
+    private void decreasePrice(Lot lot) {
         BigDecimal currentBid = lot.getCurrentBid();
         BigDecimal oldPrice = lot.getPrice();
         BigDecimal newPrice = oldPrice.add(currentBid);
 
-        long idLot = lot.getIdLot();
-        String lotIdString = String.valueOf(idLot);
-        String oldPriceString = oldPrice.toString();
-        String newPriceString = newPrice.toString();
+        if (newPrice.compareTo(BigDecimal.ZERO) <= 0) {
+            newPrice = BigDecimal.ZERO;
+            lot.setStatus(LotStatusEnum.PAYMENTWAITING);
+        }
 
-        executeUpdate(BID_LOT_QUERY, newPriceString, lotIdString, oldPriceString);
+        lot.setPrice(newPrice);
     }
 }

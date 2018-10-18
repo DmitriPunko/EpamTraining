@@ -5,10 +5,9 @@ import com.epam.auction.model.AuctionTypeEnum;
 import com.epam.auction.model.ColorEnum;
 import com.epam.auction.model.Lot;
 import com.epam.auction.model.LotPhoto;
-import com.epam.auction.model.dto.LotDto;
-import com.epam.auction.service.LotDtoService;
 import com.epam.auction.service.LotPhotoService;
 import com.epam.auction.service.LotService;
+import com.epam.auction.upload.FileUploader;
 import com.epam.auction.util.DateTimeParser;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
@@ -17,7 +16,6 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,29 +25,35 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Designed to complete offer a lot process.
+ */
 public class OfferALotCommand implements Command {
 
     private static final Logger LOGGER = Logger.getLogger(OfferALotCommand.class.getName());
-
     private static final String ID = "id";
-    private static final String LOT_DTO_LIST = "lotDtoList";
-
-    private static final String LOT_PHOTO_DIRECTORY = "/img/lot/";
-    private static final String SAVE_PATH = "E:\\EPAM\\Training\\Projects\\FinalProject\\auction\\src\\main\\webapp\\img\\lot\\";
 
     private static final int HOUR_IN_MILLIS = 3600000;
     private static final String JAVAX_SERVLET_CONTEXT_TEMPDIR = "javax.servlet.context.tempdir";
+    private static final String COMMAND_OFFER_ALOT_PAGE = "controller?command=offerALotPage";
 
-    private static final String MAIN_PAGE = "/WEB-INF/main.jsp";
-
+    /**
+     * Process the request, offer a lot and generates a result of processing in the form of
+     * {@link com.epam.auction.command.CommandResult} object.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @return A response in the form of {@link com.epam.auction.command.CommandResult} object.
+     * @throws ServiceException when DaoException is caught.
+     */
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException, ServletException {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
 
         Lot lot = new Lot();
         List<String> lotPhotosPaths = new ArrayList<>();
 
         HttpSession session = request.getSession();
-        long id = (Long) session.getAttribute(ID);
+        long id = (long) session.getAttribute(ID);
         lot.setOwnerId(id);
 
         try {
@@ -61,15 +65,18 @@ public class OfferALotCommand implements Command {
             ServletFileUpload servletFileUpload = new ServletFileUpload(fileItemFactory);
             List<FileItem> items = servletFileUpload.parseRequest(request);
 
+            FileUploader fileUploader = FileUploader.getInstance();
             for (FileItem item : items) {
                 if (item.isFormField()) {
                     buildLotParams(item, lot);
                 } else {
-                    uploadLotPhoto(item, lotPhotosPaths);
+                    String fileName = fileUploader.upload(item);
+                    lotPhotosPaths.add(fileName);
                 }
             }
         } catch (FileUploadException e) {
             LOGGER.error(e.getMessage(), e);
+            throw new ServiceException(e.getMessage(), e);
         }
 
         LotService lotService = new LotService();
@@ -82,11 +89,7 @@ public class OfferALotCommand implements Command {
             lotPhotoService.saveLotPhoto(lotPhoto);
         }
 
-        LotDtoService lotDtoService = new LotDtoService();
-        List<LotDto> lotDtoList = lotDtoService.findAllActive();
-        request.setAttribute(LOT_DTO_LIST, lotDtoList);
-
-        return MAIN_PAGE;
+        return new CommandResult(COMMAND_OFFER_ALOT_PAGE, true);
     }
 
     private void buildLotParams(FileItem item, Lot lot) {
@@ -142,22 +145,6 @@ public class OfferALotCommand implements Command {
             default:
                 throw new IllegalArgumentException("Unknown type of parameter!");
         }
-    }
-
-    private void uploadLotPhoto(FileItem fileItem, List<String> photosPaths) throws ServletException {
-
-        String fileName = fileItem.getName();
-        String pathname = SAVE_PATH + fileName;
-
-        try {
-            File uploadedFile = new File(pathname);
-            fileItem.write(uploadedFile);
-        } catch (Exception e) {
-            throw new ServletException(e.getMessage(), e);
-        }
-
-        String photoPath = LOT_PHOTO_DIRECTORY + fileName;
-        photosPaths.add(photoPath);
     }
 
     private List<LotPhoto> buildLotPhotos(List<String> photosPaths, long lotId) {

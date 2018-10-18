@@ -12,8 +12,18 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
+/**
+ * Designed to build an object of type {@link com.epam.auction.model.Lot} with specified characteristics.
+ */
 public class LotBuilder implements Builder<Lot> {
 
+    /**
+     * Builds an object of type Lot with properties.
+     *
+     * @param resultSet Instance of {@link java.sql.ResultSet} with property set to build an object type Lot.
+     * @return Returns built object type Lot.
+     * @throws DaoException Throws when SQL Exception is caught.
+     */
     @Override
     public Lot build(ResultSet resultSet) throws DaoException {
         try {

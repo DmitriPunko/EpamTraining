@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Designed to performance lot finding process.
+ */
 public class FindLotsCommand implements Command {
 
     private static final String MAIN_PAGE = "/WEB-INF/main.jsp";
@@ -24,8 +27,17 @@ public class FindLotsCommand implements Command {
     private static final String DATE_OF_START_FROM = "date_of_start_from";
     private static final String DATE_OF_END_TO = "date_of_end_to";
 
+    /**
+     * Process the request, find lots with given parameters and generates a result of processing in the form of
+     * {@link com.epam.auction.command.CommandResult} object.
+     *
+     * @param request  an {@link HttpServletRequest} object that contains client request
+     * @param response an {@link HttpServletResponse} object that contains the response the servlet sends to the client
+     * @return A response in the form of {@link com.epam.auction.command.CommandResult} object.
+     * @throws ServiceException when DaoException is caught.
+     */
     @Override
-    public String execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
+    public CommandResult execute(HttpServletRequest request, HttpServletResponse response) throws ServiceException {
 
         Map<String, String> parameters = findLotsParameters(request);
 
@@ -34,7 +46,7 @@ public class FindLotsCommand implements Command {
 
         request.setAttribute(LOT_DTO_LIST, lotDtoList);
 
-        return MAIN_PAGE;
+        return new CommandResult(MAIN_PAGE, false);
     }
 
     private Map<String, String> findLotsParameters(HttpServletRequest request) {

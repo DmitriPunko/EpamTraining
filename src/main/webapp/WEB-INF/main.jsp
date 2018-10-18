@@ -1,6 +1,7 @@
-<%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" isELIgnored="false" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="ctg" uri="/WEB-INF/tld/fullFilePath" %>
 
 <fmt:setLocale value="${sessionScope.language}"/>
 <fmt:setBundle basename="text" var="text"/>
@@ -8,6 +9,7 @@
 <fmt:message bundle="${text}" key="header.button.signOut" var="sign_out"/>
 <fmt:message bundle="${text}" key="header.button.profile" var="profile"/>
 <fmt:message bundle="${text}" key="header.button.offerALot" var="offer_a_lot"/>
+<fmt:message bundle="${text}" key="header.button.home" var="home"/>
 
 <fmt:message bundle="${text}" key="footer.helpInfo" var="contact_us"/>
 
@@ -35,7 +37,6 @@
 <fmt:message bundle="${text}" key="main.finder.button.find" var="find"/>
 
 
-
 <html lang="${sessionScope.language}">
 <head>
     <link rel="stylesheet" type="text/css" href="../style/mainStyle.css">
@@ -45,8 +46,9 @@
 <body>
 
 <header>
-    <a href="controller?command=main" style="float:left">ENAUCT</a>
-    <a href="controller?command=language&language=${sessionScope.nextLanguage}" style="float:right">${sessionScope.nextLanguage}</a>
+    <a href="controller?command=main" style="float:left">${home}</a>
+    <a href="controller?command=language&currentPage=main&language=${sessionScope.nextLanguage}"
+       style="float:right">${sessionScope.nextLanguage}</a>
     <a href="controller?command=signOut">${sign_out}</a>
     <a href="controller?command=profile">${profile}</a>
     <a href="controller?command=offerALotPage">${offer_a_lot}</a>
@@ -54,52 +56,16 @@
 
 <div class="card">
     <div class="row">
-        <div class="column side">
-            <table id="lots">
-                <tr>
-                    <th>${photo}</th>
-                    <th>${lot}#</th>
-                    <th>${brand}</th>
-                    <th>${model}</th>
-                    <th>${current_price}$</th>
-                </tr>
-                <c:forEach items="${lotDtoList}" var="lotDto">
-                    <tr>
-                        <td>
-                            <div>
-                                <c:if test="${lotDto.photos.size() != 0}">
-                                    <img src="../${lotDto.photos.get(0).url}" alt="lot photo" width="200px">
-                                </c:if>
-                            </div>
 
-                            <div>
-                                <a href="controller?command=lotInfo&lotId=${lotDto.lot.idLot}">${lot_info}</a>
-                            </div>
-                        </td>
-                        <td><c:out value="${ lotDto.lot.idLot }"/></td>
-                        <td><c:out value="${ lotDto.lot.brand }"/></td>
-                        <td><c:out value="${ lotDto.lot.model }"/></td>
-                        <td>
-                            <div><c:out value="${ lotDto.lot.price }$"/></div>
-                            <div>
-                                <div class="bidButton">
-                                    <a href="controller?command=lotInfo&lotId=${lotDto.lot.idLot}">${bid_button}</a>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </table>
-        </div>
-        <div class="column middle">
+        <div class="middle">
             <div class="vehicleFinderHeader">${vehicle_finder}</div>
             <form action="" class="vehicleFinder" method="get">
                 <input type="hidden" name="command" value="findLots">
                 <div class="row">
-                    <div class="col-25">
+                    <div class="col-30">
                         <label for="auction_type">${auction_type}</label>
                     </div>
-                    <div class="col-75">
+                    <div class="col-70">
                         <select id="auction_type" name="auction_type">
                             <option value="All">${all}</option>
                             <option value="direct">${direct}</option>
@@ -109,10 +75,10 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-25">
+                    <div class="col-30">
                         <label for="brand">${brand}</label>
                     </div>
-                    <div class="col-75">
+                    <div class="col-70">
                         <select id="brand" name="brand">
                             <option value="All">${all}</option>
                             <option value="Audi">Audi</option>
@@ -126,7 +92,7 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-25">
+                    <div class="col-30">
                         <label for="year_of_issue_from">${year}</label>
                     </div>
                     <div class="col-30">
@@ -170,7 +136,7 @@
                             <option value="1920">1920</option>
                         </select>
                     </div>
-                    <div class="col-15">
+                    <div class="col-10">
                         <label for="year_of_issue_to">${to}</label>
                     </div>
                     <div class="col-30">
@@ -218,10 +184,10 @@
 
 
                 <div class="row">
-                    <div class="col-25">
+                    <div class="col-30">
                         <label for="is_damaged">${damaged}</label>
                     </div>
-                    <div class="col-75">
+                    <div class="col-70">
                         <select id="is_damaged" name="is_damaged">
                             <option value="All">${all}</option>
                             <option value="1">${yes}</option>
@@ -235,6 +201,44 @@
                 </div>
             </form>
         </div>
+
+        <div class="side">
+            <table id="lots" class="lots">
+                <tr>
+                    <th>${photo}</th>
+                    <th>${lot}#</th>
+                    <th>${brand}</th>
+                    <th>${model}</th>
+                    <th>${current_price}$</th>
+                </tr>
+                <c:forEach items="${lotDtoList}" var="lotDto">
+                    <tr>
+                        <td>
+                            <div>
+                                <c:if test="${lotDto.photos.size() != 0}">
+                                    <c:set var="photoName" value="${lotDto.photos.get(0).getUrl()}" scope="page"/>
+                                    <img src="${ctg:filePath(photoName)}" alt="lot photo" width="200px">
+                                </c:if>
+                            </div>
+
+                            <div>
+                                <a href="controller?command=lotInfo&lotId=${lotDto.lot.idLot}">${lot_info}</a>
+                            </div>
+                        </td>
+                        <td><c:out value="${ lotDto.lot.idLot }"/></td>
+                        <td><c:out value="${ lotDto.lot.brand }"/></td>
+                        <td><c:out value="${ lotDto.lot.model }"/></td>
+                        <td>
+                            <div><c:out value="${ lotDto.lot.price }$"/></div>
+                            <div>
+                                <a href="controller?command=lotInfo&lotId=${lotDto.lot.idLot}" class="bidButton">${bid_button}</a>
+                            </div>
+                        </td>
+                    </tr>
+                </c:forEach>
+            </table>
+        </div>
+
     </div>
 </div>
 

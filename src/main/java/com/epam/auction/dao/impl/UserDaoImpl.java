@@ -14,6 +14,9 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Class is an implementation of access to user database and provides methods to work with it.
+ */
 public class UserDaoImpl extends AbstractDao<User> implements UserDao {
     private static final String TABLE_NAME = "user";
     private static final String ALL_USERS_QUERY = "SELECT * FROM user WHERE role = 'user'";
@@ -43,6 +46,13 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
         return TABLE_NAME;
     }
 
+    /**
+     * The method designed for the process of saving a {@link User} object in database.
+     *
+     * @param item an {@link Identifiable} {@link User} object that should be saved to the database.
+     * @return created user identifier in database.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public long save(Identifiable item) throws DaoException {
         User user = (User) item;
@@ -69,6 +79,14 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
                 roleString, isBannedString, balanceString);
     }
 
+    /**
+     * Method designed for searching user depends on user login and password.
+     *
+     * @param login    is a {@link String} object that contains user login
+     * @param password is a {@link String} object that contains user password
+     * @return a {@link Optional} object with finding {@link User} inside.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public Optional<User> findUserByLoginAndPassword(String login, String password) throws DaoException {
 
@@ -77,17 +95,36 @@ public class UserDaoImpl extends AbstractDao<User> implements UserDao {
 
     }
 
+    /**
+     * Method designed for searching users.
+     *
+     * @return a {@link List} implementation with a {@link User} objects.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public List<User> findAllUsers() throws DaoException {
         return executeQuery(ALL_USERS_QUERY, new UserBuilder());
     }
 
+    /**
+     * Method designed for searching {@link com.epam.auction.model.Lot} bidders
+     * depends on {@link com.epam.auction.model.Lot} identifier.
+     *
+     * @param lotId is an identifier of {@link com.epam.auction.model.Lot}
+     * @return a {@link List} implementation with a {@link User} objects.
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public List<User> findLotBidders(long lotId) throws DaoException {
         String lotIdString = String.valueOf(lotId);
         return executeQuery(LOT_BIDDERS_QUERY, new UserBuilder(), lotIdString);
     }
 
+    /**
+     * Method designed for saving {@link com.epam.auction.model.Lot} bidders.
+     *
+     * @throws DaoException Signals that an database access object exception of some sort has occurred.
+     */
     @Override
     public void saveLotBidder(User bidder, long lotId) throws DaoException {
         String lotIdString = String.valueOf(lotId);
