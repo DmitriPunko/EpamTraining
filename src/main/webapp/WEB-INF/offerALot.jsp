@@ -165,7 +165,8 @@
                         <option value="Luxury">Luxury</option>
                         <option value="Sports utility">Sports utility</option>
                         <option value="Multi purpose">Multi purpose</option>
-                        <option value="Sport coupés">Sport coupés</option>
+                        <option value="Sport coupés">Sport coupes</option>
+                        <option value="Sport coupés">Retro</option>
                     </select>
                 </div>
             </div>

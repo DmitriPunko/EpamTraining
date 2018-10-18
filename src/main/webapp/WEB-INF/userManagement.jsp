@@ -50,7 +50,7 @@
             <hr>
             <c:forEach items="${userList}" var="user">
                 <div class="col-75">
-                    <a href="controller?command=lotInfo&lotId=${user.firstName}">${user.firstName} ${user.lastName} ${user.userName} ${user.email}</a>
+                    ${user.firstName}${user.firstName} ${user.lastName} ${user.userName} ${user.email}
                 </div>
                 <div class="col-25">
                     <c:choose>

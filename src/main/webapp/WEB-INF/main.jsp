@@ -84,6 +84,7 @@
                             <option value="Audi">Audi</option>
                             <option value="Bentley">Bentley</option>
                             <option value="BMW">BMW</option>
+                            <option value="Bugatti">Bugatti</option>
                             <option value="Mercedes">Mercedes</option>
                             <option value="Rolls Royce">Rolls Royce</option>
                             <option value="Jaguar">Jaguar</option>
